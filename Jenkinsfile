@@ -1,41 +1,20 @@
-pipeline 
-{
+pipeline {
     agent any
-
-    stages 
-    {
-        stage('Build') 
-        {
-            steps 
-            {
-                echo 'Build App'
+    stages {
+        stage('clean') {
+            steps {
+                sh 'mvn clean'
             }
         }
-
-        stage('Test') 
-        {
-            steps 
-            {
-                echo 'Test App'
+        stage('build') {
+            steps {
+                sh 'mvn package'
+            }
+            post {
+                always {
+                    junit 'target/surefire-reports/*.xml'
+                }
             }
         }
-
-        stage('Deploy') 
-        {
-            steps 
-            {
-                echo 'Deploy App'
-            }
-        }
-    }
-
-    post
-    {
-
-    	always
-    	{
-    		emailext body: '', subject: 'maven build', to: 'sfaraz106@gmail.com'
-    	}
-
-    }
+   }  
 }
